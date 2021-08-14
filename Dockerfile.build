@@ -1,0 +1,26 @@
+# 构建环境
+FROM golang:1.16-buster as build
+
+RUN apt update && apt install cmake g++ -y && mkdir /home/build && mkdir /home/build/boringssl
+
+COPY ./boringssl /home/boringssl
+COPY ./pcre /home/pcre
+
+# 编译boringssl
+WORKDIR /home/build/boringssl
+
+RUN cmake /home/boringssl && make && mv /home/boringssl/include /home/build/boringssl/include && rm -rf /home/boringssl
+
+WORKDIR /home/pcre
+RUN ./configure --prefix=/home/build/pcre && make && make install
+
+FROM debian:buster
+
+COPY --from=build /home/build /home/build
+
+RUN apt update && apt install make gcc g++ zlib1g zlib1g.dev -y
+
+ENTRYPOINT ["bash"]
+
+
+
