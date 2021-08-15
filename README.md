@@ -10,7 +10,9 @@
 
 # 运行镜像的使用
 
-`docker pull hfunc/nginx-http3`
+`docker pull hfunc/nginx-http3:latest`
+
+官方编译版 `docker pull hfunc/nginx-http3:off`
 
 容器内Nginx路径为:`/home/nginx`，根据需要进行存储映射
 
