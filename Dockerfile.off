@@ -7,7 +7,7 @@ RUN apt-get update && \
     ./Configure --prefix=/src/openssl/build && make && make install
     
 RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev && \
-    cd .. && hg clone https://hg.nginx.org/nginx-quic && \
+    hg clone https://hg.nginx.org/nginx-quic && \
     hg clone http://hg.nginx.org/njs && \
     cd nginx-quic && \
     hg update quic && \
