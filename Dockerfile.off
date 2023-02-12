@@ -10,16 +10,18 @@ RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-de
     cd nginx-quic && \
     hg update quic && \
     ./auto/configure --with-debug \
-        --sbin-path=/usr/sbin \
-        --conf-path=/etc/nginx \
-        --error-log-path=/var/log/nginx \
+        --prefix=/home/nginx
         --with-http_v2_module \
         --with-http_v3_module \
         --with-stream_quic_module \
         --with-openssl="/src/openssl" && \
     make && make install
 
-FROM nginx
-COPY --from=build /src/nginx-quic/objs/nginx /usr/sbin
-RUN /usr/sbin/nginx -V > /dev/stderr
-EXPOSE 80 443
+FROM debian:buster-slim
+RUN mkdir /home/nginx
+
+COPY --from=build /home/nginx /home/nginx
+
+WORKDIR /home/nginx/sbin
+
+ENTRYPOINT ["nginx","-g","daemon off;"]
