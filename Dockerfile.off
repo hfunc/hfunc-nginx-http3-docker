@@ -2,12 +2,12 @@ FROM nginx AS build
 WORKDIR /src
 RUN apt-get update && \
     apt-get install -y git gcc make g++ perl libunwind-dev && \
-    git clone -b openssl-3.0.8-quic1 https://github.com/quictls/openssl.git && \
-    mkdir openssl/build && \
+    git clone -b openssl-3.0.8-quic1 --depth=1 https://github.com/quictls/openssl.git && \
+    mkdir openssl/build && cd openssl && \
     ./Configure --prefix=/src/openssl/build && make && make install
     
 RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev && \
-    hg clone https://hg.nginx.org/nginx-quic && \
+    cd .. && hg clone https://hg.nginx.org/nginx-quic && \
     hg clone http://hg.nginx.org/njs && \
     cd nginx-quic && \
     hg update quic && \
