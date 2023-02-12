@@ -2,9 +2,7 @@ FROM nginx AS build
 WORKDIR /src
 RUN apt-get update && \
     apt-get install -y git gcc make g++ perl libunwind-dev && \
-    git clone -b openssl-3.0.8-quic1 --depth=1 https://github.com/quictls/openssl.git && \
-    mkdir openssl/build && cd openssl && \
-    ./Configure --prefix=/src/openssl/build && make && make install
+    git clone -b openssl-3.0.8-quic1 --depth=1 https://github.com/quictls/openssl.git 
     
 RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev && \
     hg clone https://hg.nginx.org/nginx-quic && \
@@ -16,8 +14,7 @@ RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-de
         --with-http_v2_module \
         --with-http_v3_module \
         --with-stream_quic_module \
-        --with-cc-opt="-I/src/openssl/build/include"   \
-        --with-ld-opt="-L/src/openssl/build/lib" && \
+        --with-openssl="/src/openssl" && \
     make && make install
 FROM nginx
 COPY --from=build /src/nginx-quic/objs/nginx /usr/sbin
