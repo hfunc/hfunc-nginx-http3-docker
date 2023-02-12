@@ -8,18 +8,18 @@ if [ "$target" == "" ]; then
 fi
 
 buildEnv(){
-  docker buildx build -f Dockerfile.build -t hfunc/nginx-http3-build:latest .
-  docker push hfunc/nginx-http3-build:latest
+  docker build -f Dockerfile.build -t hikit/nginx-http3-build:latest .
+  docker push hikit/nginx-http3-build:latest
 }
 
 buildNginx(){
-  docker buildx build -f Dockerfile -t hfunc/nginx-http3:latest .
-  docker push hfunc/nginx-http3:latest
+  docker build -f Dockerfile -t hikit/nginx-http3:latest .
+  docker push hikit/nginx-http3:latest
 }
 
 buildOff(){
-  docker buildx build -f Dockerfile.off -t hfunc/nginx-http3:off .
-  docker push hfunc/nginx-http3:latest
+  docker build -f Dockerfile.off -t hikit/nginx-http3:off .
+  docker push hikit/nginx-http3:latest
 }
 
 if [ "$target" == "all" ]; then

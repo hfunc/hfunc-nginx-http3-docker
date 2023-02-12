@@ -1,5 +1,5 @@
 # 构建 http3环境
-FROM hfunc/nginx-http3-build:latest as build
+FROM hikit/nginx-http3-build:latest as build
 
 RUN mkdir /home/build/nginx && mkdir /home/nginx
 
@@ -8,12 +8,12 @@ COPY ./nginx-quic /home/build/nginx
 WORKDIR /home/build/nginx
 
 RUN ./auto/configure --prefix=/home/nginx \
-     --with-debug --with-http_v3_module   \
-     --with-http_quic_module  \
-     --with-stream_quic_module \
+     --with-debug \
      --with-http_v2_module \
-     --with-cc-opt="-I../boringssl/include -I../pcre/include"   \
-     --with-ld-opt="-L../boringssl/ssl -L../boringssl/crypto -L../pcre/lib" \
+     --with-http_v3_module \
+     --with-stream_quic_module \
+     --with-cc-opt="-I../openssl/include -I../pcre/include"   \
+     --with-ld-opt="-L../openssl/ssl -L../openssl/crypto -L../pcre/lib" \
     && make \
     && make install
 

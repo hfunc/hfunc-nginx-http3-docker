@@ -10,9 +10,9 @@
 
 # 运行镜像的使用
 
-`docker pull hfunc/nginx-http3:latest`
+`docker pull hikit/nginx-http3:latest`
 
-官方编译版 `docker pull hfunc/nginx-http3:off`
+官方编译版 `docker pull hikit/nginx-http3:off`
 
 容器内Nginx路径为:`/home/nginx`，根据需要进行存储映射
 
@@ -43,8 +43,13 @@
 
 # 构建镜像的使用
 
-`docker pull hfunc/nginx-http3-build`
+`docker pull hikit/nginx-http3-build`
 
 构建的组件有：`boringssl` 和 `pcre`
 
 构建产生文件在`/home/build`
+
+
+# Reference
+
+[Experimental QUIC support for nginx](https://quic.nginx.org/readme.html)
