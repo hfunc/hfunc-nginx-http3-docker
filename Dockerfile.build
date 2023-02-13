@@ -5,7 +5,7 @@ COPY ./pcre /home/pcre
 
 WORKDIR /home
 
-RUN apt update && apt install cmake g++ -y && git clone https://boringssl.googlesource.com/boringssl
+RUN apt update && apt install cmake g++ -y && git clone -b chromium-5414 --depth=1 https://github.com/google/boringssl.git
 
 # 编译boringssl
 WORKDIR /home/build/boringssl
