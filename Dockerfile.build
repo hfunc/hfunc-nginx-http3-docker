@@ -1,25 +1,43 @@
 # 构建环境
-FROM golang:1.16-buster as build
+FROM golang:1.16-bullseye as build
 
-RUN apt update && apt install g++ -y && mkdir /home/build && mkdir /home/build/openssl
-
-COPY ./openssl /home/openssl
 COPY ./pcre /home/pcre
 
-# 编译openssl
-WORKDIR /home/openssl
-RUN ./Configure --prefix=/home/build/openssl && make && make install
+WORKDIR /home
 
-# 编译pcre
+RUN apt update && apt install cmake g++ -y && git clone https://boringssl.googlesource.com/boringssl
+
+# 编译boringssl
+WORKDIR /home/build/boringssl
+
+RUN cmake /home/boringssl && make && mv /home/boringssl/include /home/build/boringssl/include && rm -rf /home/boringssl
+
 WORKDIR /home/pcre
 RUN ./configure --prefix=/home/build/pcre && make && make install
 
-# 打包镜像
-FROM debian:buster
-COPY --from=build /home/build /home/build
-RUN apt update && apt install make gcc g++ zlib1g zlib1g.dev -y
+WORKDIR /home/build
 
-ENTRYPOINT ["bash"]
+RUN  apt update && apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-dev libgd-ocaml-dev libgeoip-dev && \
+    hg clone https://hg.nginx.org/nginx-quic && \
+    hg clone http://hg.nginx.org/njs && \
+    cd nginx-quic && \
+    hg update quic && \
+    ./auto/configure --with-debug \
+        --prefix=/home/nginx \
+        --with-http_v2_module \
+        --with-http_v3_module \
+        --with-stream_quic_module \
+        --with-cc-opt="-I../boringssl/include -I../pcre/include"   \
+        --with-ld-opt="-L../boringssl/ssl -L../boringssl/crypto -L../pcre/lib" &&\
+    make && make install
+    
+FROM debian:bullseye-slim
 
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log 
 
+COPY --from=build /home/nginx /home/nginx
+COPY --from=build /home/build/pcre/lib /usr/local/lib
 
+ENV LD_LIBRARY_PATH /usr/local/lib
+
+WORKDIR /home/nginx/sbin

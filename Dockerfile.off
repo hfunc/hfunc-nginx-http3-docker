@@ -15,7 +15,9 @@ RUN apt-get install -y mercurial libperl-dev libpcre3-dev zlib1g-dev libxslt1-de
         --with-http_v3_module \
         --with-stream_quic_module \
         --with-openssl="/src/openssl" && \
-    make && make install
+    make && make install \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log 
 
 FROM debian:bullseye-slim
 
