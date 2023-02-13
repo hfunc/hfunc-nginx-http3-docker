@@ -23,7 +23,6 @@ RUN mkdir /home/nginx
 COPY --from=build /home/nginx /home/nginx
 COPY --from=build /home/build/pcre/lib /usr/local/lib
 
-ENV LD_LIBRARY_PATH /usr/local/lib
 ENV PATH /home/nginx/sbin:$PATH
 
 WORKDIR /home/nginx/sbin
